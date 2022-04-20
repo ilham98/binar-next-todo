@@ -7,6 +7,8 @@ import {
   deleteTodo,
   fetchTodo,
 } from "../redux/slices/todoSlice";
+import Navbar from "../components/Navbar";
+import Authenticated from "../middlewares/Authenticated";
 
 export default function Home() {
   const todos = useSelector((store) => store.todo);
@@ -33,25 +35,28 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.container}>
-      <input onChange={onInputChange} value={todos.form.title} />
-      <button onClick={onSubmitClick} disabled={todos.isSubmitLoading}>
-        Tambah
-      </button>
-      {todos.isLoading ? (
-        "Loading"
-      ) : (
-        <ul>
-          {todos.data.map((todo, todoIndex) => (
-            <li key={todo.id}>
-              {todo.title}{" "}
-              <button onClick={() => onDeleteClick(todo.id, todoIndex)}>
-                X
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Authenticated>
+      <Navbar />
+      <div className={styles.container}>
+        <input onChange={onInputChange} value={todos.form.title} />
+        <button onClick={onSubmitClick} disabled={todos.isSubmitLoading}>
+          Tambah
+        </button>
+        {todos.isLoading ? (
+          "Loading"
+        ) : (
+          <ul>
+            {todos.data.map((todo, todoIndex) => (
+              <li key={todo.id}>
+                {todo.title}{" "}
+                <button onClick={() => onDeleteClick(todo.id, todoIndex)}>
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </Authenticated>
   );
 }

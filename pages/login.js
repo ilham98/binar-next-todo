@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import { attemptAuth, updateCredentials } from "../redux/slices/authSlice";
+import Guest from "../middlewares/Guest";
 
 function Login() {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ function Login() {
   };
 
   return (
-    <>
+    <Guest>
       <Navbar />
       <form onSubmit={onSubmit}>
         <div>
@@ -33,10 +34,12 @@ function Login() {
           <input onChange={onInputChange} name="password" />
         </div>
         <div>
-          <button type="submit">Login</button>
+          <button type="submit" disabled={auth.isLoading}>
+            Login
+          </button>
         </div>
       </form>
-    </>
+    </Guest>
   );
 }
 

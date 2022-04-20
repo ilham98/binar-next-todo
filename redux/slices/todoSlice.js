@@ -20,8 +20,7 @@ export const fetchTodo = createAsyncThunk("todo/fetchTodo", async () => {
     });
     return todos;
   } catch (err) {
-    console.log(err);
-    throw TypeError("Unable to load posts");
+    throw TypeError("Unable to load todo");
   }
 });
 
@@ -35,8 +34,7 @@ export const createTodo = createAsyncThunk("todo/createTodo", async (title) => {
       title,
     };
   } catch (err) {
-    console.log(err);
-    throw TypeError("Unable to load posts");
+    throw TypeError("Unable to create todo");
   }
 });
 
@@ -47,8 +45,7 @@ export const deleteTodo = createAsyncThunk(
       await deleteDoc(doc(firebaseDb, "todos", params.id));
       return params.index;
     } catch (err) {
-      console.log(err);
-      throw TypeError("Unable to load posts");
+      throw TypeError("Unable to delete todo");
     }
   }
 );

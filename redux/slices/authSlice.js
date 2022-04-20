@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import firebaseAuth from "../../firebase/firebaseAuth";
+import { signOut } from "firebase/auth";
 
 export const attemptAuth = createAsyncThunk(
   "auth/attemptAuth",
   async (credentials) => {
     try {
-      console.log(credentials);
       const { email, password } = credentials;
       const userCredential = await signInWithEmailAndPassword(
         firebaseAuth,
@@ -17,11 +17,19 @@ export const attemptAuth = createAsyncThunk(
         email: userCredential.user.email,
       };
     } catch (err) {
-      console.log(err);
-      throw TypeError("Unable to load posts");
+      throw TypeError("Unable to login");
     }
   }
 );
+
+export const logout = createAsyncThunk("auth/logout", async () => {
+  try {
+    await signOut(firebaseAuth);
+    return {};
+  } catch (err) {
+    throw TypeError("Unable to logout");
+  }
+});
 
 export const authSlice = createSlice({
   name: "auth",
@@ -31,6 +39,7 @@ export const authSlice = createSlice({
       password: "",
     },
     isLoading: false,
+    isSignOutLoading: false,
     authenticatedUser: null,
   },
   reducers: {
@@ -39,6 +48,11 @@ export const authSlice = createSlice({
       state.form = {
         ...state.form,
         [name]: value,
+      };
+    },
+    updateAuthenticatedUser: (state, action) => {
+      state.authenticatedUser = {
+        email: action.payload.email,
       };
     },
   },
@@ -53,9 +67,20 @@ export const authSlice = createSlice({
     builder.addCase(attemptAuth.rejected, (state) => {
       state.isLoading = false;
     });
+
+    builder.addCase(logout.pending, (state) => {
+      state.isSignOutLoading = true;
+    });
+    builder.addCase(logout.fulfilled, (state) => {
+      state.authenticatedUser = null;
+      state.isSignOutLoading = false;
+    });
+    builder.addCase(logout.rejected, (state) => {
+      state.isSignOutLoading = false;
+    });
   },
 });
 
-export const { updateCredentials } = authSlice.actions;
+export const { updateCredentials, updateAuthenticatedUser } = authSlice.actions;
 
 export default authSlice.reducer;
