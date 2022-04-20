@@ -61,11 +61,13 @@ export const todoSlice = createSlice({
     data: [],
     errorMessage: "",
   },
+  // sync
   reducers: {
     changeFormTitle: (state, action) => {
       state.form.title = action.payload;
     },
   },
+  // async
   extraReducers: (builder) => {
     builder.addCase(fetchTodo.pending, (state) => {
       state.isLoading = true;
